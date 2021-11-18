@@ -14,7 +14,8 @@ def get_data():
 
     temp_val = 75 + random.randint(0,25)
     humid_val = 1000 - random.randint(0,250)
-
+    press_val = 1000 + random.randint(0,350)
+    
     sensor_data[0] = FEATHER_ID
     # Temperature data
     sensor_data[1] = (temp_val >> 8) & 0xff
@@ -22,5 +23,8 @@ def get_data():
     # Humidity data
     sensor_data[3] = (humid_val >> 8) & 0xff
     sensor_data[4] = humid_val & 0xff
+    #Pressure data
+    sensor_data[5] = (press_val >> 8) & 0xff
+    sensor_data[6] = press_val & 0xff
 
     return sensor_data
