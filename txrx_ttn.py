@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 # btemperli, 14.2.2021
+# updated by Colby Sawyer 11.30.2021 (North American Support)
 
 import sys
 from time import sleep
@@ -17,6 +18,8 @@ from data import get_data
 BOARD.setup()
 parser = LoRaArgumentParser("LoRaWAN sendReceive")
 
+#TODO: Add OLED support (Populated status messages, state, error checking)
+#TODO: Automate programmatically (allow for interval parameters, etc)
 
 class LoRaWanSystem(LoRa):
     def __init__(self, devaddr = [], nwkey = [], appkey = [], verbose = False):
