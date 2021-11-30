@@ -7,9 +7,9 @@ Node created with Raspberry Pi Zero W and Adafruit RFM95x Radio Hat
 
 ## Dependencies
     pip install -r requirements.txt
-    
+[More Information](https://pypi.org/project/LoRaPy/)
+
 ## Usage
     sudo python3 txrx_ttn.py
     
-[More Information](https://pypi.org/project/LoRaPy/)
     
