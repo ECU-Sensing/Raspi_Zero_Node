@@ -61,6 +61,8 @@ class LoRaWanSystem(LoRa):
         self.set_invert_iq(1)
         self.reset_ptr_rx()
         self.set_mode(MODE.RXCONT)
+        sleep(45)
+        sys.exit(0)
 
     def do_send(self):
         lorawan = LoRaWAN.new(keys.nwskey, keys.appskey)
