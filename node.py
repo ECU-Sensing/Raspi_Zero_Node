@@ -1,7 +1,6 @@
 # Author: Colby Sawyer
 # Based on the Adafruit documentation for creating a LoRA node (https://learn.adafruit.com/lora-and-lorawan-radio-for-raspberry-pi/usage)
-
-import time
+from time import sleep
 from datetime import datetime
 import busio
 import random
@@ -9,7 +8,8 @@ from digitalio import DigitalInOut
 import board
 import digitalio
 import adafruit_ssd1306
-from LoRaPy.lorapy import LoRaPy
+from .txrx_ttn import LoRaWanSystem
+
 
 import keys
 from data import get_data
@@ -32,35 +32,44 @@ cs = DigitalInOut(board.CE1)
 irq = DigitalInOut(board.D22)
 rst = DigitalInOut(board.D25)
 
-# LoraWAN
-last_send = 0
+# First: Send
+lora = LoRaWanSystem(False)
 
-def receive_callback(payload):
-    global last_send
-    print(payload)
-    # reset time 
-    last_send = time.time()
+# Setup
+lora.set_mode(MODE.SLEEP)
+lora.set_dio_mapping([1, 0, 0, 0, 0, 0])
+lora.set_freq(902.7)
+lora.set_pa_config(pa_select=1)
+lora.set_spreading_factor(7)
+lora.set_pa_config(max_power=0x0F, output_power=0x0E)
+lora.set_sync_word(0x34)
+lora.set_rx_crc(True)
 
-    
-def try_to_send(message):
-    # wait at least 900s before sending next message.
-    if last_send + 900 > time.time():
-        return
-    
-    # more than 900s since the last sending.
-    lora.send(message, 7)
+print(lora)
+assert(lora.get_agc_auto_on() == 1)
 
-
-lora = LoRaPy(keys.devaddr, keys.nwskey, keys.appskey, True, receive_callback)
 
 while True:
     # draw a box to clear the image
     display.fill(0)
     display.text('RasPi LoRaWAN', 35, 0, 1)
 
-    sensor_data = get_data()
+    try:
+        print("Sending LoRaWAN message\n")
+        lora.do_send()
+        sleep(0.1)
+        lora.set_mode(MODE.SLEEP)
+
+    except KeyboardInterrupt:
+        sys.stdout.flush()
+        print("\nKeyboardInterrupt")
+
+    finally:
+        sys.stdout.flush()
+        lora.set_mode(MODE.SLEEP)
+        BOARD.teardown()
+        
     print('Sending packet .....')
-    try_to_send(sensor_data)
     print('Sent: \t' + datetime.now().strftime("%H:%M:%S.%f"))
     print("Packet Sent!\n\n")
     #lora.frame_counter += 1
