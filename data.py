@@ -1,6 +1,3 @@
-from node_extra import FEATHER_ID
-
-
 # Author: Colby Sawyer
 # Dummy implementation of data. This used generate random "Weather" data. 
 # It is recommended that you prepackage your data in a bytearray here so that you can have have a sketch for the decoder later
