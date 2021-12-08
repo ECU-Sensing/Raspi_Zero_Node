@@ -1,2 +1,5 @@
 LoRaPy
-random
+adafruit-circuitpython-ssd1306
+adafruit-circuitpython-framebuf
+adafruit-circuitpython-rfm9x
+pycrypto
