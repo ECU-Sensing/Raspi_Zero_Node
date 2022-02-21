@@ -14,7 +14,7 @@ import counter
 import LoRaWAN
 from LoRaWAN.MHDR import MHDR
 import reset_ada
-from data import get_data
+from data_size112 import get_data
 
 BOARD.setup()
 parser = LoRaArgumentParser("LoRaWAN sendReceive")
@@ -93,8 +93,10 @@ assert(lora.get_agc_auto_on() == 1)
 
 try:
     print("Sending LoRaWAN message\n")
-    lora.do_send()
-    sleep(0.1)
+    # Original 
+    # lora.do_send()
+    #    sleep(0.1)
+    schedule.every(1).seconds.do(lora.do_send())
     lora.set_mode(MODE.SLEEP)
 
 except KeyboardInterrupt:
