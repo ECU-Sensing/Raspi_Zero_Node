@@ -2,4 +2,4 @@ LoRaPy
 pycrypto
 pynmea2
 schedule
-adafruit_gps
+adafruit-circuitpython-gps

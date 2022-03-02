@@ -6,7 +6,7 @@ import time
 import board
 import busio
 
-import adafruit_gps
+import adafruit-circuitpython-gps
 import pynmea2
 import serial
 
@@ -33,14 +33,14 @@ def get_gps_data(i2c=True, uart=False):
         uart = serial.Serial("/dev/ttyUSB0", baudrate=9600, timeout=10)
 
         # Create a GPS module instance.
-        gps = adafruit_gps.GPS(uart)  # Use UART/pyserial
+        gps = adafruit_circuitpython_gps.GPS(uart)  # Use UART/pyserial
 
     if i2c:
         # If using I2C, we'll create an I2C interface to talk to using default pins
         i2c = board.I2C()
 
         # Create a GPS module instance.
-        gps = adafruit_gps.GPS_GtopI2C(i2c)  # Use I2C interface
+        gps = adafruit_circuitpython_gps.GPS_GtopI2C(i2c)  # Use I2C interface
 
     # Initialize the GPS module by changing what data it sends and at what rate.
     # These are NMEA extensions for PMTK_314_SET_NMEA_OUTPUT and
