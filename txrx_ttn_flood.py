@@ -93,12 +93,10 @@ assert(lora.get_agc_auto_on() == 1)
 
 try:
     print("Sending LoRaWAN message\n")
-    # Original 
-    # lora.do_send()
-    #    sleep(0.1)
-    schedule.every(1).seconds.do(lora.do_send())
-    lora.set_mode(MODE.SLEEP)
-
+    while True:
+        lora.do_send()
+        sleep(0.9)
+        # lora.set_mode(MODE.SLEEP)
 except KeyboardInterrupt:
     sys.stdout.flush()
     print("\nKeyboardInterrupt")
