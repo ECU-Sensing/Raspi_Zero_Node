@@ -88,14 +88,18 @@ lora.set_pa_config(max_power=0x0F, output_power=0x0E)
 lora.set_sync_word(0x34)
 lora.set_rx_crc(True)
 
-print(lora)
+#print(lora)
 assert(lora.get_agc_auto_on() == 1)
 
 try:
     print("Sending LoRaWAN message\n")
+    
+    x = 0
     while True:
         lora.do_send()
-        sleep(0.9)
+        #sleep(0.9)
+        print(str(x))
+        x+=1
         # lora.set_mode(MODE.SLEEP)
 except KeyboardInterrupt:
     sys.stdout.flush()
