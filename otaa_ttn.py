@@ -13,6 +13,12 @@ from LoRaWAN.MHDR import MHDR
 from random import randrange
 from data import get_data
 
+import busio
+from digitalio import DigitalInOut, Direction, Pull
+import board
+# Import the SSD1306 module.
+import adafruit_ssd1306
+
 BOARD.setup()
 parser = LoRaArgumentParser("LoRaWAN sender")
 
@@ -78,15 +84,34 @@ lora.set_pa_config(max_power=0x0F, output_power=0x0E)
 lora.set_sync_word(0x34)
 lora.set_rx_crc(True)
 
+# Create the I2C interface.
+i2c = busio.I2C(board.SCL, board.SDA)
+# 128x32 OLED Display
+reset_pin = DigitalInOut(board.D4)
+display = adafruit_ssd1306.SSD1306_I2C(128, 32, i2c, reset=reset_pin)
+# Clear the display.
+display.fill(0)
+display.show()
+width = display.width
+height = display.height
+
 print(lora)
 assert(lora.get_agc_auto_on() == 1)
 
+display.fill(0)
+
+# Attempt to set up the RFM9x Module
 try:
     print("Sending LoRaWAN join request\n")
+    display.text("Sending LoRaWAN join request\n")
     lora.start()
 except KeyboardInterrupt:
     sys.stdout.flush()
     print("\nKeyboardInterrupt")
+except RuntimeError as error:
+    # Thrown on version mismatch
+    display.text('RFM9x: ERROR', 0, 0, 1)
+    print('RFM9x Error: ', error)
 finally:
     sys.stdout.flush()
     lora.set_mode(MODE.SLEEP)
