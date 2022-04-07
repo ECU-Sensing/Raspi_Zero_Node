@@ -103,14 +103,14 @@ display.fill(0)
 # Attempt to set up the RFM9x Module
 try:
     print("Sending LoRaWAN join request\n")
-    display.text("Sending LoRaWAN join request\n")
+    display.text("LoRaWAN OTAA ESDN", 0,0,1)
     lora.start()
 except KeyboardInterrupt:
     sys.stdout.flush()
     print("\nKeyboardInterrupt")
 except RuntimeError as error:
     # Thrown on version mismatch
-    display.text('RFM9x: ERROR', 0, 0, 1)
+    display.text('RFM9x: ERROR', -40, 0, 1)
     print('RFM9x Error: ', error)
 finally:
     sys.stdout.flush()
