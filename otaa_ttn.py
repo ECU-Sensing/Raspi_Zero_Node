@@ -62,6 +62,9 @@ class LoRaWANotaa(LoRa):
         self.tx_counter = 1
 
         lorawan = LoRaWAN.new(keys.appkey)
+        print('Dev EUI: ' + str(keys.deveui))
+        print('App EUI: ' + str(keys.appeui))
+        print('Dev EUI: ' + str(keys.appskey))
         lorawan.create(MHDR.JOIN_REQUEST, {'deveui': keys.deveui, 'appeui': keys.appeui, 'devnonce': devnonce, 'data': list(get_data())})
 
         self.write_payload(lorawan.to_raw())
