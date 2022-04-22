@@ -33,8 +33,8 @@ class LoRaWANotaa(LoRa):
 
         self.write_payload(lorawan.to_raw())
         self.set_mode(MODE.TX)
-        while True:
-            sleep(1)
+        sleep(5)
+        sys.exit(0)
 
     def on_rx_done(self):
         print("RxDone")
@@ -53,9 +53,7 @@ class LoRaWANotaa(LoRa):
             print(lorawan.get_devaddr())
             print(lorawan.derive_nwskey(devnonce))
             print(lorawan.derive_appskey(devnonce))
-            do_send(lorawan.derive_nwskey(devnonce),lorawan.derive_appskey(devnonce))
-            print("\n")
-            sys.exit(0)
+            self.do_send(lorawan.derive_nwskey(devnonce),lorawan.derive_appskey(devnonce))
 
         print("Got LoRaWAN message continue listen for join accept")
 
