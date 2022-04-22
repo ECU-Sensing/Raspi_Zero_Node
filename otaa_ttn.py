@@ -12,6 +12,7 @@ import keys
 from LoRaWAN.MHDR import MHDR
 from random import randrange
 from data import get_data
+import counter
 
 import busio
 from digitalio import DigitalInOut, Direction, Pull
@@ -25,6 +26,15 @@ parser = LoRaArgumentParser("LoRaWAN sender")
 class LoRaWANotaa(LoRa):
     def __init__(self, verbose = False):
         super(LoRaWANotaa, self).__init__(verbose)
+
+    def do_send(self, nwskey, appskey):
+        lorawan = LoRaWAN.new(nwskey, appskey)
+        lorawan.create(MHDR.UNCONF_DATA_UP, {'devaddr': keys.devaddr, 'fcnt': counter.get_current(), 'data': list(get_data())})
+
+        self.write_payload(lorawan.to_raw())
+        self.set_mode(MODE.TX)
+        while True:
+            sleep(1)
 
     def on_rx_done(self):
         print("RxDone")
@@ -43,6 +53,7 @@ class LoRaWANotaa(LoRa):
             print(lorawan.get_devaddr())
             print(lorawan.derive_nwskey(devnonce))
             print(lorawan.derive_appskey(devnonce))
+            do_send(lorawan.derive_nwskey(devnonce),lorawan.derive_appskey(devnonce))
             print("\n")
             sys.exit(0)
 
@@ -62,15 +73,16 @@ class LoRaWANotaa(LoRa):
         self.tx_counter = 1
 
         lorawan = LoRaWAN.new(keys.appkey)
-        print('Dev EUI: ' + str(keys.deveui))
-        print('App EUI: ' + str(keys.appeui))
-        print('Dev EUI: ' + str(keys.appskey))
-        lorawan.create(MHDR.JOIN_REQUEST, {'deveui': keys.deveui, 'appeui': keys.appeui, 'devnonce': devnonce, 'data': list(get_data())})
+        #print('Dev EUI: ' + str(keys.deveui))
+        #print('App EUI: ' + str(keys.appeui))
+        #print('Dev EUI: ' + str(keys.appskey))
+        lorawan.create(MHDR.JOIN_REQUEST, {'deveui': keys.deveui, 'appeui': keys.appeui, 'devnonce': devnonce})
 
         self.write_payload(lorawan.to_raw())
         self.set_mode(MODE.TX)
         while True:
             sleep(1)
+
 
 
 # Init
