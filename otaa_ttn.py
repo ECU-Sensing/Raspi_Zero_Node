@@ -4,8 +4,6 @@
 
 import sys
 from time import sleep
-
-from regex import D
 from SX127x.LoRa import *
 from SX127x.LoRaArgumentParser import LoRaArgumentParser
 from SX127x.board_config import BOARD
