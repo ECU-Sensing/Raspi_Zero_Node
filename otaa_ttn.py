@@ -4,6 +4,8 @@
 
 import sys
 from time import sleep
+
+from regex import D
 from SX127x.LoRa import *
 from SX127x.LoRaArgumentParser import LoRaArgumentParser
 from SX127x.board_config import BOARD
@@ -13,7 +15,6 @@ from LoRaWAN.MHDR import MHDR
 from random import randrange
 from data import get_data
 import counter
-
 import busio
 from digitalio import DigitalInOut, Direction, Pull
 import board
@@ -27,14 +28,13 @@ class LoRaWANotaa(LoRa):
     def __init__(self, verbose = False):
         super(LoRaWANotaa, self).__init__(verbose)
 
-    def do_send(self, nwskey, appskey):
+    def send_uplink_data(self, nwskey, appskey, devaddr):
         lorawan = LoRaWAN.new(nwskey, appskey)
-        lorawan.create(MHDR.UNCONF_DATA_UP, {'devaddr': keys.devaddr, 'fcnt': counter.get_current(), 'data': list(get_data())})
+        lorawan.create(MHDR.UNCONF_DATA_UP, {'devaddr': devaddr, 'fcnt': counter.get_current(), 'data': list(get_data())})
 
         self.write_payload(lorawan.to_raw())
         self.set_mode(MODE.TX)
         sleep(5)
-        sys.exit(0)
 
     def on_rx_done(self):
         print("RxDone")
@@ -50,10 +50,15 @@ class LoRaWANotaa(LoRa):
         if lorawan.get_mhdr().get_mtype() == MHDR.JOIN_ACCEPT:
             print("Got LoRaWAN join accept")
             print(lorawan.valid_mic())
-            print(lorawan.get_devaddr())
-            print(lorawan.derive_nwskey(devnonce))
-            print(lorawan.derive_appskey(devnonce))
-            self.do_send(lorawan.derive_nwskey(devnonce),lorawan.derive_appskey(devnonce))
+            devaddr=lorawan.get_devaddr()
+            print(devaddr)
+            nwskey=lorawan.derive_nwskey(devnonce)
+            print(nwskey)
+            appskey=lorawan.derive_appskey(devnonce)
+            print(appskey)
+            print("\n")
+            self.send_uplink_data(nwskey, appskey, devaddr)
+            sys.exit(0)
 
         print("Got LoRaWAN message continue listen for join accept")
 
@@ -71,16 +76,11 @@ class LoRaWANotaa(LoRa):
         self.tx_counter = 1
 
         lorawan = LoRaWAN.new(keys.appkey)
-        #print('Dev EUI: ' + str(keys.deveui))
-        #print('App EUI: ' + str(keys.appeui))
-        #print('Dev EUI: ' + str(keys.appskey))
-        lorawan.create(MHDR.JOIN_REQUEST, {'deveui': keys.deveui, 'appeui': keys.appeui, 'devnonce': devnonce})
+        lorawan.create(MHDR.JOIN_REQUEST, {'deveui': keys.deveui, 'appeui': keys.appeui, 'devnonce': devnonce, 'frm_payload': list(get_data())})
 
         self.write_payload(lorawan.to_raw())
         self.set_mode(MODE.TX)
-        while True:
-            sleep(1)
-
+        sleep(5)
 
 
 # Init
