@@ -35,8 +35,12 @@ class LoRaWANotaa(LoRa):
 
         lorawan = LoRaWAN.new([], keys.appkey)
         lorawan.read(payload)
+        print("Payload")
         print(lorawan.get_payload())
+        print("Version:")
         print(lorawan.get_mhdr().get_mversion())
+        print("Type:")
+        print(lorawan.get_mhdr().get_mtype())
 
         if lorawan.get_mhdr().get_mtype() == MHDR.JOIN_ACCEPT:
             print("Got LoRaWAN join accept")
