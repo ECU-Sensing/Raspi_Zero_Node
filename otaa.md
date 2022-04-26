@@ -1,9 +1,12 @@
 # LoRaWAN Procedure for OTAA (Ver 1.0.3)
 
 
-## Procedure
+## Procedure for One-Time Activation
 1. Initiate Join-Requests multiple times
 2. Upon receipt of Join-Accept we transition to sending Uplink with the session identifiers
+
+## Procedure post Activation
+1. OTAA Keys will not expire, this means if session keys exist than just use standard uplinks. 
 
 
 ## Overview

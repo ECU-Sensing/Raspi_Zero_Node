@@ -7,6 +7,7 @@ from time import sleep
 from SX127x.LoRa import *
 from SX127x.LoRaArgumentParser import LoRaArgumentParser
 from SX127x.board_config import BOARD
+from SX127x.constants import MODE
 import LoRaWAN
 import keys
 from LoRaWAN.MHDR import MHDR
@@ -25,14 +26,6 @@ parser = LoRaArgumentParser("LoRaWAN sender")
 class LoRaWANotaa(LoRa):
     def __init__(self, verbose = False):
         super(LoRaWANotaa, self).__init__(verbose)
-
-    def send_uplink_data(self, nwskey, appskey, devaddr):
-        lorawan = LoRaWAN.new(nwskey, appskey)
-        lorawan.create(MHDR.UNCONF_DATA_UP, {'devaddr': devaddr, 'fcnt': counter.get_current(), 'data': list(get_data())})
-
-        self.write_payload(lorawan.to_raw())
-        self.set_mode(MODE.TX)
-        sleep(5)
 
     def on_rx_done(self):
         print("RxDone")
@@ -63,21 +56,18 @@ class LoRaWANotaa(LoRa):
     def on_tx_done(self):
         self.clear_irq_flags(TxDone=1)
         print("TxDone")
-        print("Receiving LoRaWAN message")
 
         self.set_mode(MODE.STDBY)
         self.set_dio_mapping([0,0,0,0,0,0])
         self.set_invert_iq(1)
         self.reset_ptr_rx()
         self.set_mode(MODE.RXCONT)
-        sleep(45)
-        sys.exit(0)
 
-    def do_send(self):
+    def start(self):
         self.tx_counter = 1
 
         lorawan = LoRaWAN.new(keys.appkey)
-        lorawan.create(MHDR.JOIN_REQUEST, {'deveui': keys.deveui, 'appeui': keys.appeui, 'devnonce': devnonce, 'frm_payload': list(get_data())})
+        lorawan.create(MHDR.JOIN_REQUEST, {'deveui': keys.deveui, 'appeui': keys.appeui, 'devnonce': devnonce})
 
         self.write_payload(lorawan.to_raw())
         self.set_mode(MODE.TX)
@@ -119,10 +109,7 @@ assert(lora.get_agc_auto_on() == 1)
 try:
     print("Sending LoRaWAN join request\n")
     #display.text("LoRaWAN OTAA ESDN", 0,0,1)
-    #lora.start()
-    lora.do_send()
-    sleep(0.1)
-    lora.set_mode(MODE.SLEEP)
+    lora.start()
 except KeyboardInterrupt:
     sys.stdout.flush()
     print("\nKeyboardInterrupt")
