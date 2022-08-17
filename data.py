@@ -3,6 +3,10 @@
 # It is recommended that you prepackage your data in a bytearray here so that you can have have a sketch for the decoder later
 
 import random
+from func_timeout import func_timeout, FunctionTimedOut
+
+#def use_encoder():
+    #return Hydros().get_data()
 
 def get_data():
     # Here is where you can add your sensor specific information. The driving code will use whatever data is here
@@ -23,5 +27,15 @@ def get_data():
     #Pressure data
     sensor_data[5] = (press_val >> 8) & 0xff
     sensor_data[6] = press_val & 0xff
+    
+    # For Sensor Specific Uses
+    #try:
+    #    sensor_data = func_timeout(30, use_encoder)
+    #except FunctionTimedOut:
+    #    sensor_data = [0]
 
     return sensor_data
+
+
+
+    
