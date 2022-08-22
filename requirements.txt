@@ -3,3 +3,4 @@ pycrypto
 pynmea2
 schedule
 adafruit-circuitpython-gps
+func-timeout

@@ -10,6 +10,8 @@ from func_timeout import func_timeout, FunctionTimedOut
 
 def get_data():
     # Here is where you can add your sensor specific information. The driving code will use whatever data is here
+
+    # The Code section below uses default encoding convention with random values for Temperature, Humidity and Pressure
     sensor_data = bytearray(7)
     FEATHER_ID = 1
 
