@@ -1,9 +1,10 @@
 # Author: Colby Sawyer
 # Dummy implementation of data. This used generate random "Weather" data. 
 # It is recommended that you prepackage your data in a bytearray here so that you can have have a sketch for the decoder later
-
+import psutil
 import random
 from func_timeout import func_timeout, FunctionTimedOut
+#from devices.hydros import Hydros
 
 #def use_encoder():
     #return Hydros().get_data()
@@ -35,6 +36,13 @@ def get_data():
     #    sensor_data = func_timeout(30, use_encoder)
     #except FunctionTimedOut:
     #    sensor_data = [0]
+
+    cpu_val = int((psutil.cpu_percent(4) * 100))
+    print('The CPU usage is: ', cpu_val)
+    data_len = len(sensor_data)
+    sensor_data.append(((cpu_val >> 8) & 0xff))
+    sensor_data.append((cpu_val & 0xff))
+
 
     return sensor_data
 
