@@ -36,6 +36,9 @@ def get_data():
     #    sensor_data = func_timeout(30, use_encoder)
     #except FunctionTimedOut:
     #    sensor_data = [0]
+    #except Exception as err:
+    #    sensor_data = [0]
+    #    print(err)
 
     cpu_val = int((psutil.cpu_percent(4) * 100))
     print('The CPU usage is: ', cpu_val)
