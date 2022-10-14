@@ -13,7 +13,7 @@ def use_opc():
     return OPC().get_data()
 
 def use_sen5x():
-    return SEN5x().get_data()
+    return SEN5x().get_data(dec_factor=1)
 
 def get_data():
     # Here is where you can add your sensor specific information. The driving code will use whatever data is here
