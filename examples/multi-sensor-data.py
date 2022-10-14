@@ -20,6 +20,15 @@ def get_data():
 
     # For Sensor Specific Uses
 
+    # TO Display Logging in STDOUT
+    log = logging.getLogger('')
+    log.setLevel(logging.INFO)
+    format = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+    ch = logging.StreamHandler(sys.stdout)
+    ch.setFormatter(format)
+    log.addHandler(ch)
+
+
     # Sensor 1 Data 
     sensor1_data = 0
     sensor2_data = 0
@@ -39,7 +48,7 @@ def get_data():
         sensor1_data = func_timeout(30, use_hydros)
         sensor1_state = True
     except (FunctionTimedOut, SensorError) as err:
-        exception = 11
+        exception = exception + 100
         error_state_count += 1
         print(err)
     except Exception as err:
@@ -51,7 +60,7 @@ def get_data():
         sensor2_data = func_timeout(30, use_opc)
         sensor2_state = True
     except (FunctionTimedOut, SensorError) as err:
-        exception = 12
+        exception = exception + 20
         error_state_count += 1
         print(err)
     except Exception as err:
@@ -63,7 +72,7 @@ def get_data():
         sensor3_data = func_timeout(30, use_sen5x)
         sensor3_state = True
     except (FunctionTimedOut, SensorError) as err:
-        exception = 13
+        exception = exception + 3
         error_state_count += 1
         print(err)
     except Exception as err:
@@ -71,8 +80,8 @@ def get_data():
         print(err)
 
     # If more than one device error state default to exception code 10
-    if error_state_count > 1:
-        exception = 10
+    if error_state_count > 0:
+        exception = exception + 1000
 
     # Exception to Start
     sensor_data[0] = (exception >> 8) & 0xff
