@@ -4,7 +4,8 @@
 import psutil
 from func_timeout import func_timeout, FunctionTimedOut
 from esdn_sensing import Hydros, OPC, SEN5x, SensorError
-
+import logging
+import sys
 
 def use_hydros():
     return Hydros().get_data()
@@ -84,6 +85,7 @@ def get_data():
         exception = exception + 1000
 
     # Exception to Start
+    print('Exception: \t' + str(exception))
     sensor_data[0] = (exception >> 8) & 0xff
     sensor_data[1] = exception & 0xff
     # Sensor 1
