@@ -20,22 +20,25 @@ function Decoder(bytes, port) {
     var sensor3_size = 0;
 
     if (exception == 1) {
-
+        decoded.status = "Fatal Device State Exception";
     }
     else if (exception == 2){
-
+        decoded.status = "Fatal CPU State Exception";
     }
     else if (exception > 1000){
         exception = exception - 1000;
         exception_digits = splitToDigit(exception);
         // ['1','2','3']
         if (exception_digits[0] == 1){
+            decoded.device_one = "Disconnected";
             sensor1_reporter = false;
         }
         if (exception_digits[1] == 2){
+            decoded.device_two = "Disconnected";
             sensor2_reporter = false;
         }
         if (exception_digits[2] == 3){
+            decoded.device_three = "Disconnected";
             sensor3_reporter = false;
         }
     }
