@@ -6,8 +6,9 @@ Exceptions Listing:
 |   0       |           | No Error                                  |
 |   1       | SHIM      | Fatal Device State Exception              |
 |   2       | SHIM      | Fatal CPU State Exception                 |
+|   3       | SHIM      | Fatal Timeout Exception                   |
 |   1123    | Sensor Set| Unable to connect to ENTIRE sensor set    |
-|   1xx    | Sensor    | Unable to connect to single device        |
+|   1xx    | Sensor    | Unable to connect to single device         |
 
 
     ex. In Multi-Sensor Environment
