@@ -11,9 +11,6 @@ function Decoder(bytes, port) {
     var sensor1_reporter = true;
     var sensor2_reporter = true;
     var sensor3_reporter = true;
-    var sensor1_dec_factor = 100;
-    var sensor2_dec_factor = 100;
-    var sensor3_dec_factor = 1;
     var payload_size = bytes.length;
     var sensor1_size = 0;
     var sensor2_size = 0;
@@ -29,16 +26,41 @@ function Decoder(bytes, port) {
         exception = exception - 1000;
         exception_digits = splitToDigit(exception);
         // ['1','2','3']
-        if (exception_digits[0] == 1){
+        if (exception_digits.includes(1)){
             decoded.device_one = "Disconnected";
+            decoded.pm25_pm10_std = null;
+            decoded.pm25_pm25_std = null;
+            decoded.pm25_pm100_std = null;
+            decoded.pm25_pm10_env = null;
+            decoded.pm25_pm25_env = null;
+            decoded.pm25_pm100_env_Int = null;
+            decoded.pm25_part_03um = null;
+            decoded.pm25_part_05um = null;
+            decoded.pm25_part_10um = null;
+            decoded.pm25_part_25um = null;
+            decoded.pm25_part_50um = null;
+            decoded.pm25_part_100um_Int = null;
             sensor1_reporter = false;
         }
-        if (exception_digits[1] == 2){
+        if (exception_digits.includes(2)){
             decoded.device_two = "Disconnected";
+            decoded.opc_avg_pm1 = null;
+            decoded.opc_avg_pm25 = null
+            decoded.opc_avg_pm10 =  null;
+            decoded.opc_temperature =  null;
+            decoded.opc_humidity =  null;
+            decoded.opc_laser_status = null;
             sensor2_reporter = false;
         }
-        if (exception_digits[2] == 3){
+        if (exception_digits.includes(3)){
             decoded.device_three = "Disconnected";
+            decoded.sen_mc_1p0 =  null;
+            decoded.sen_mc_2p5 = null;
+            decoded.sen_mc_4p0 = null;
+            decoded.sen_mc_10p0 = null;
+            decoded.sen_ambient_rh = null;
+            decoded.sen_ambient_t = null;
+            decoded.sen_voc_index = null;
             sensor3_reporter = false;
         }
     }
@@ -49,6 +71,7 @@ function Decoder(bytes, port) {
 
     if(sensor1_reporter){
         sensor1_size = 24;
+        decoded.device_one = "Connected";
         second_sensor_start = sensor1_size + first_sensor_start;
         third_sensor_start = sensor1_size + first_sensor_start;
         //decoded = decoded + decodedPM25(first_sensor_start, bytes)
@@ -66,21 +89,22 @@ function Decoder(bytes, port) {
         var part_100um_Int = (bytes[first_sensor_start+22] << 8) | bytes[first_sensor_start+23];
     
         // Decode int to float
-        decoded.pm10_std = pm10_std_Int/sensor1_dec_factor;
-        decoded.pm25_std = pm25_std_Int/sensor1_dec_factor;
-        decoded.pm100_std = pm100_std_Int/sensor1_dec_factor;
-        decoded.pm10_env = pm10_env_Int/sensor1_dec_factor;
-        decoded.pm25_env = pm25_env_Int/sensor1_dec_factor;
-        decoded.pm100_env_Int = pm100_env_Int/sensor1_dec_factor;
-        decoded.part_03um = part_03um_Int/sensor1_dec_factor;
-        decoded.part_05um = part_05um_Int/sensor1_dec_factor;
-        decoded.part_10um = part_10um_Int/sensor1_dec_factor;
-        decoded.part_25um = part_25um_Int/sensor1_dec_factor;
-        decoded.part_50um = part_50um_Int/sensor1_dec_factor;
-        decoded.part_100um_Int = part_100um_Int/sensor1_dec_factor;
+        decoded.pm25_pm10_std = pm10_std_Int/100;
+        decoded.pm25_pm25_std = pm25_std_Int/100;
+        decoded.pm25_pm100_std = pm100_std_Int/100;
+        decoded.pm25_pm10_env = pm10_env_Int/100;
+        decoded.pm25_pm25_env = pm25_env_Int/100;
+        decoded.pm25_pm100_env_Int = pm100_env_Int/100;
+        decoded.pm25_part_03um = part_03um_Int/100;
+        decoded.pm25_part_05um = part_05um_Int/100;
+        decoded.pm25_part_10um = part_10um_Int/100;
+        decoded.pm25_part_25um = part_25um_Int/100;
+        decoded.pm25_part_50um = part_50um_Int/100;
+        decoded.pm25_part_100um_Int = part_100um_Int/100;
     }
     if (sensor2_reporter){
         sensor2_size = 12;
+        decoded.device_two = "Connected";
         third_sensor_start = second_sensor_start+ sensor2_size;
         //decoded = decoded + decodedOPC(second_sensor_start,  bytes)
         var avg_pm1_Int = (bytes[second_sensor_start] << 8) | bytes[second_sensor_start+1];
@@ -91,15 +115,16 @@ function Decoder(bytes, port) {
         var laser_status_Int = (bytes[second_sensor_start+10] << 8) | bytes[second_sensor_start+11];
 
         // Decode int to float
-        decoded.avg_pm1 = avg_pm1_Int/sensor2_dec_factor;
-        decoded.avg_pm25  = avg_pm25_Int/sensor2_dec_factor;
-        decoded.avg_pm10 = avg_pm10_Int/sensor2_dec_factor;
-        decoded.temperature = temperature_Int/sensor2_dec_factor;
-        decoded.humidity = humidity_Int/sensor2_dec_factor;
-        decoded.laser_status = laser_status_Int/sensor2_dec_factor;
+        decoded.opc_avg_pm1 = avg_pm1_Int/100;
+        decoded.opc_avg_pm25  = avg_pm25_Int/100;
+        decoded.opc_avg_pm10 = avg_pm10_Int/100;
+        decoded.opc_temperature = temperature_Int/100;
+        decoded.opc_humidity = humidity_Int/100;
+        decoded.opc_laser_status = laser_status_Int/100;
     }
     if (sensor3_reporter){
         sensor3_size = 14;
+        decoded.device_three = "Connected";
         //decoded = decoded + decodedSEN5x(third_sensor_start, bytes)
         // Decode bytes to int
         var mc_1p0_Int = (bytes[third_sensor_start] << 8) | bytes[third_sensor_start+1];
@@ -112,16 +137,15 @@ function Decoder(bytes, port) {
 
 
         // Decode int to float
-        decoded.mc_1p0 = mc_1p0_Int/sensor3_dec_factor;
-        decoded.mc_2p5 = mc_2p5_Int/sensor3_dec_factor;
-        decoded.mc_4p0 = mc_4p0_Int/sensor3_dec_factor;
-        decoded.mc_10p0 = mc_10p0_Int/sensor3_dec_factor;
-        decoded.ambient_rh = ambient_rh_Int/sensor3_dec_factor;
-        decoded.ambient_t = ambient_t_Int/sensor3_dec_factor;
-        decoded.voc_index = voc_index_Int/sensor3_dec_factor;
+        decoded.sen_mc_1p0 = mc_1p0_Int/1;
+        decoded.sen_mc_2p5 = mc_2p5_Int/1;
+        decoded.sen_mc_4p0 = mc_4p0_Int/1;
+        decoded.sen_mc_10p0 = mc_10p0_Int/1;
+        decoded.sen_ambient_rh = ambient_rh_Int/1;
+        decoded.sen_ambient_t = ambient_t_Int/1;
+        decoded.sen_voc_index = voc_index_Int/1;
 
     }
-
 
     cpuInt = (bytes[payload_size-2] << 8) | bytes[payload_size-1];
     decoded.cpu = cpuInt/100;
